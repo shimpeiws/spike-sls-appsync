@@ -1,0 +1,16 @@
+type Company {
+  id: ID!
+  createdAt: AWSDateTime!
+}
+
+input CreateInputCompany {
+  name: String!
+}
+
+type Query {
+  listCompany: [Company!]!
+}
+
+type Mutation {
+  createCompany(input: CreateInputCompany!): Company
+}

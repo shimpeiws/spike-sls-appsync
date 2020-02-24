@@ -1,0 +1,82 @@
+service:
+  name: spike-sls-appsync
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  - serverless-appsync-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: ap-northeast-1
+
+custom:
+  appSync:
+    name: spike-sls-appsync
+    authenticationType: API_KEY
+    region: ap-northeast-1
+    mappingTemplatesLocation: resolvers
+    mappingTemplates:
+      - type: Mutation
+        field: createUser
+        dataSource: User
+      - type: Query
+        field: listUser
+        dataSource: User
+      - type: Mutation
+        field: createBranch
+        dataSource: Branch
+      - type: Query
+        field: listBranch
+        dataSource: Branch
+      - type: Mutation
+        field: createCompany
+        dataSource: Company
+      - type: Query
+        field: listCompany
+        dataSource: Company
+    schema:
+      - schema/user.graphql
+      - schema/branch.graphql
+      - schema/company.graphql
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: User
+        config:
+          tableName: appsync-user
+          iamRoleStatements:
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource:
+                - arn:aws:dynamodb:${self:provider.region}:*:table/appsync-user
+      - type: AMAZON_DYNAMODB
+        name: Branch
+        config:
+          tableName: appsync-branch
+          iamRoleStatements:
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource:
+                - arn:aws:dynamodb:${self:provider.region}:*:table/appsync-branch
+      - type: AMAZON_DYNAMODB
+        name: Company
+        config:
+          tableName: appsync-company
+          iamRoleStatements:
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource:
+                - arn:aws:dynamodb:${self:provider.region}:*:table/appsync-company
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          method: get
+          path: hello

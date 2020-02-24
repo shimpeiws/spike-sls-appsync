@@ -1,0 +1,17 @@
+type Branch {
+  id: ID!
+  companyID: ID!
+  createdAt: AWSDateTime!
+}
+
+input CreateInputBranch {
+  name: String!
+}
+
+type Query {
+  listBranch: [Branch!]!
+}
+
+type Mutation {
+  createBranch(input: CreateInputBranch!): Branch
+}

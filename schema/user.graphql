@@ -1,0 +1,17 @@
+type User {
+  id: ID!
+  name: String!
+  createdAt: AWSDateTime!
+}
+
+input CreateInputUser {
+  name: String!
+}
+
+type Query {
+  listUser: [User!]!
+}
+
+type Mutation {
+  createUser(input: CreateInputUser!): User
+}
