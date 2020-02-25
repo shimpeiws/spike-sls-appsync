@@ -1,3 +1,8 @@
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
+import axios from "axios";
+import { GRAPH_QL_ENDPOINT, APPSYNC_API_KEY } from "./Constants";
+
 interface Branch {
   id: string;
   companyId: string;
@@ -7,7 +12,6 @@ interface Branch {
 
 export default function Branch(_: RouteComponentProps) {
   const [name, setName] = React.useState("");
-  const [companyID, setCompanyID] = React.useState("");
   const [listBranch, setListBranch] = React.useState([] as Branch[]);
   React.useEffect(() => {
     const init = async () => {
@@ -38,7 +42,7 @@ export default function Branch(_: RouteComponentProps) {
   }, []);
   return (
     <div>
-      <h2>User</h2>
+      <h2>Branch</h2>
       {listBranch.map(branch => {
         return (
           <p>
