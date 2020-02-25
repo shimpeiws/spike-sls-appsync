@@ -7,6 +7,7 @@ type Branch {
 
 input CreateInputBranch {
   name: String!
+  companyID: ID!
 }
 
 type Query {
