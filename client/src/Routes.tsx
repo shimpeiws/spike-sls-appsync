@@ -3,6 +3,7 @@ import { Switch } from "react-router";
 import { Link, Route } from "react-router-dom";
 import User from "./User";
 import Branch from "./Branch";
+import Company from "./Company";
 
 export class Routes extends React.Component<{}, {}> {
   render() {
@@ -24,7 +25,7 @@ export class Routes extends React.Component<{}, {}> {
         <Switch>
           <Route exact path="/user" component={User} />
           <Route exact path="/branch" component={Branch} />
-          <Route exact path="/company" component={User} />
+          <Route exact path="/company" component={Company} />
         </Switch>
       </div>
     );
