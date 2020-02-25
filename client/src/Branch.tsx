@@ -63,6 +63,8 @@ const fetchCompany = async () => {
 };
 
 const createBranch = async (name: string, companyID: string) => {
+  console.info("name", name);
+  console.info("companyID", companyID);
   await axios.post(
     GRAPH_QL_ENDPOINT,
     {
@@ -99,6 +101,13 @@ export default function Branch(_: RouteComponentProps) {
     };
     init();
   }, []);
+  React.useEffect(() => {
+    if (listCompany.length === 0) {
+      return;
+    }
+    console.info("listCompany", listCompany);
+    setSelectedCompanyID(listCompany[0].id);
+  }, listCompany);
   return (
     <div>
       <h2>Branch</h2>
@@ -113,6 +122,7 @@ export default function Branch(_: RouteComponentProps) {
       <select
         value={selectedCompanyID}
         onChange={event => {
+          console.info("event.target.value", event.target.value);
           setSelectedCompanyID(event.target.value);
         }}
       >
@@ -121,7 +131,7 @@ export default function Branch(_: RouteComponentProps) {
         })}
       </select>
       <button onClick={() => createBranch(name, selectedCompanyID)}>
-        CREATE USER
+        CREATE BRANCH
       </button>
     </div>
   );
