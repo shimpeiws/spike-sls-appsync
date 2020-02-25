@@ -1,6 +1,7 @@
 type Branch {
   id: ID!
   companyID: ID!
+  name: String!
   createdAt: AWSDateTime!
 }
 
