@@ -32,7 +32,7 @@ const createUser = async (name: string) => {
   );
 };
 
-export default function Hello(_: RouteComponentProps) {
+export default function User(_: RouteComponentProps) {
   const [name, setName] = React.useState("");
   const [listUser, setListUser] = React.useState([] as User[]);
   React.useEffect(() => {
