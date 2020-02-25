@@ -1,5 +1,6 @@
 type Company {
   id: ID!
+  name: String!
   createdAt: AWSDateTime!
 }
 

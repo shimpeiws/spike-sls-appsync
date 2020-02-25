@@ -1,11 +1,13 @@
 type Branch {
   id: ID!
   companyID: ID!
+  name: String!
   createdAt: AWSDateTime!
 }
 
 input CreateInputBranch {
   name: String!
+  companyID: ID!
 }
 
 type Query {
