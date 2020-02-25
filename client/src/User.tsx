@@ -64,7 +64,7 @@ export default function User(_: RouteComponentProps) {
   }, []);
   return (
     <div>
-      <h2>Hello</h2>
+      <h2>User</h2>
       {listUser.map(user => {
         return (
           <p>
