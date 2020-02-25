@@ -10,15 +10,17 @@ interface Branch {
   createdAt: string;
 }
 
-export default function Branch(_: RouteComponentProps) {
-  const [name, setName] = React.useState("");
-  const [listBranch, setListBranch] = React.useState([] as Branch[]);
-  React.useEffect(() => {
-    const init = async () => {
-      const res = await axios.post(
-        GRAPH_QL_ENDPOINT,
-        {
-          query: `
+interface Company {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
+const fetchBranch = async () => {
+  return axios.post(
+    GRAPH_QL_ENDPOINT,
+    {
+      query: `
             query {
               listBranch {
                 id,
@@ -27,16 +29,73 @@ export default function Branch(_: RouteComponentProps) {
               }
             }
             `
-        },
-        {
-          headers: {
-            "Content-Type": "application/graphql",
-            "x-api-key": APPSYNC_API_KEY
-          }
-        }
-      );
-      console.info("res", res.data.data.listBranch);
-      setListBranch(res.data.data.listBranch);
+    },
+    {
+      headers: {
+        "Content-Type": "application/graphql",
+        "x-api-key": APPSYNC_API_KEY
+      }
+    }
+  );
+};
+
+const fetchCompany = async () => {
+  return axios.post(
+    GRAPH_QL_ENDPOINT,
+    {
+      query: `
+            query {
+              listCompany {
+                id,
+                name,
+                createdAt
+              }
+            }
+            `
+    },
+    {
+      headers: {
+        "Content-Type": "application/graphql",
+        "x-api-key": APPSYNC_API_KEY
+      }
+    }
+  );
+};
+
+const createBranch = async (name: string, companyID: string) => {
+  await axios.post(
+    GRAPH_QL_ENDPOINT,
+    {
+      query: `
+            mutation {
+              createBranch(input: {name: "${name}", companyID: "${companyID}"}) {
+                id,
+                name,
+                createdAt
+              }
+            }
+            `
+    },
+    {
+      headers: {
+        "Content-Type": "application/graphql",
+        "x-api-key": APPSYNC_API_KEY
+      }
+    }
+  );
+};
+
+export default function Branch(_: RouteComponentProps) {
+  const [name, setName] = React.useState("");
+  const [listBranch, setListBranch] = React.useState([] as Branch[]);
+  const [listCompany, setListCompany] = React.useState([] as Company[]);
+  const [selectedCompanyID, setSelectedCompanyID] = React.useState("");
+  React.useEffect(() => {
+    const init = async () => {
+      const res = await Promise.all([fetchBranch(), fetchCompany()]);
+      console.info("res", res);
+      setListBranch(res[0].data.data.listBranch);
+      setListCompany(res[1].data.data.listCompany);
     };
     init();
   }, []);
@@ -51,7 +110,19 @@ export default function Branch(_: RouteComponentProps) {
         );
       })}
       <input value={name} onChange={e => setName(e.target.value)} />
-      {/* <button onClick={() => createUser(name)}>CREATE USER</button> */}
+      <select
+        value={selectedCompanyID}
+        onChange={event => {
+          setSelectedCompanyID(event.target.value);
+        }}
+      >
+        {listCompany.map(company => {
+          return <option value={company.id}>{company.name}</option>;
+        })}
+      </select>
+      <button onClick={() => createBranch(name, selectedCompanyID)}>
+        CREATE USER
+      </button>
     </div>
   );
 }
