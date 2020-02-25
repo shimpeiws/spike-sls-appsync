@@ -1,0 +1,8 @@
+declare const GRAPH_QL_ENDPOINT: string;
+declare const APPSYNC_API_KEY: string;
+
+const _GRAPH_QL_ENDPOINT = GRAPH_QL_ENDPOINT;
+const _APPSYNC_API_KEY = APPSYNC_API_KEY;
+
+export { _GRAPH_QL_ENDPOINT as GRAPH_QL_ENDPOINT };
+export { _APPSYNC_API_KEY as APPSYNC_API_KEY };

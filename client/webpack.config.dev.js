@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/Index.tsx",
@@ -20,6 +21,13 @@ module.exports = {
       }
     ]
   },
+
+  plugins: [
+    new webpack.DefinePlugin({
+      GRAPH_QL_ENDPOINT: JSON.stringify(process.env.GRAPH_QL_ENDPOINT),
+      APPSYNC_API_KEY: JSON.stringify(process.env.APPSYNC_API_KEY)
+    })
+  ],
 
   devServer: {
     open: true,
