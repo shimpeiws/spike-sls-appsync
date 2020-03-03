@@ -26,7 +26,7 @@ const createCompany = async (name: string) => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: APPSYNC_API_KEY
       }
     }
   );
@@ -53,7 +53,7 @@ export default function User(_: RouteComponentProps) {
         {
           headers: {
             "Content-Type": "application/graphql",
-            "x-api-key": APPSYNC_API_KEY
+            Authorization: APPSYNC_API_KEY
           }
         }
       );

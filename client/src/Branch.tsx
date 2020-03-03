@@ -33,7 +33,7 @@ const fetchBranch = async () => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: APPSYNC_API_KEY
       }
     }
   );
@@ -56,7 +56,7 @@ const fetchCompany = async () => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: APPSYNC_API_KEY
       }
     }
   );
@@ -81,7 +81,7 @@ const createBranch = async (name: string, companyID: string) => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: APPSYNC_API_KEY
       }
     }
   );
