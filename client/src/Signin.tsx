@@ -1,25 +1,28 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
-import createAuth0Client from "@auth0/auth0-spa-js";
-import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
-
-const auth0Client = async (): Promise<Auth0Client> => {
-  return createAuth0Client({
-    domain: "high-pine.auth0.com",
-    client_id: "YOUR-CLIENT-ID-HERE"
-  });
-};
-
-const loginWithPopup = async () => {
-  const c = await auth0Client();
-  await c.loginWithPopup();
-};
+import { loginWithPopup, isSignin, signOut } from "./lib/Auth0";
 
 export default function Signin(_: RouteComponentProps) {
+  const [signin, setSignin] = React.useState(false);
+  React.useEffect(() => {
+    const init = async () => {
+      const res = await isSignin();
+      console.info("res", res);
+      setSignin(res);
+    };
+    init();
+  }, []);
   return (
     <div>
       <h2>Signin</h2>
-      <button onClick={async () => await loginWithPopup()}>Signin</button>
+      {signin ? (
+        <>
+          <p>already signin</p>
+          <button onClick={async () => await signOut()}>Signout</button>
+        </>
+      ) : (
+        <button onClick={async () => await loginWithPopup()}>Signin</button>
+      )}
     </div>
   );
 }
