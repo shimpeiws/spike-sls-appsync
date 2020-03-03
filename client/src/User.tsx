@@ -1,7 +1,8 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import axios from "axios";
-import { GRAPH_QL_ENDPOINT, APPSYNC_API_KEY } from "./Constants";
+import { GRAPH_QL_ENDPOINT } from "./Constants";
+import { getTokenSilentry } from "./lib/Auth0";
 
 interface User {
   id: string;
@@ -10,6 +11,7 @@ interface User {
 }
 
 const createUser = async (name: string) => {
+  const token = await getTokenSilentry();
   await axios.post(
     GRAPH_QL_ENDPOINT,
     {
@@ -26,7 +28,7 @@ const createUser = async (name: string) => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        Authorization: APPSYNC_API_KEY
+        Authorization: token
       }
     }
   );
@@ -37,6 +39,7 @@ export default function User(_: RouteComponentProps) {
   const [listUser, setListUser] = React.useState([] as User[]);
   React.useEffect(() => {
     const init = async () => {
+      const token = await getTokenSilentry();
       const res = await axios.post(
         GRAPH_QL_ENDPOINT,
         {
@@ -53,7 +56,7 @@ export default function User(_: RouteComponentProps) {
         {
           headers: {
             "Content-Type": "application/graphql",
-            Authorization: APPSYNC_API_KEY
+            Authorization: token
           }
         }
       );
