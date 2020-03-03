@@ -22,3 +22,9 @@ export const isSignin = async () => {
   const c = await auth0Client();
   return c.isAuthenticated();
 };
+
+export const getTokenSilentry = async () => {
+  const c = await auth0Client();
+  const res = await c.getIdTokenClaims();
+  return res.__raw;
+};

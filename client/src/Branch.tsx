@@ -1,7 +1,8 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import axios from "axios";
-import { GRAPH_QL_ENDPOINT, APPSYNC_API_KEY } from "./Constants";
+import { GRAPH_QL_ENDPOINT } from "./Constants";
+import { getTokenSilentry } from "./lib/Auth0";
 
 interface Branch {
   id: string;
@@ -16,7 +17,7 @@ interface Company {
   createdAt: string;
 }
 
-const fetchBranch = async () => {
+const fetchBranch = async (token: string) => {
   return axios.post(
     GRAPH_QL_ENDPOINT,
     {
@@ -33,13 +34,13 @@ const fetchBranch = async () => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: token
       }
     }
   );
 };
 
-const fetchCompany = async () => {
+const fetchCompany = async (token: string) => {
   return axios.post(
     GRAPH_QL_ENDPOINT,
     {
@@ -56,7 +57,7 @@ const fetchCompany = async () => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: token
       }
     }
   );
@@ -65,6 +66,7 @@ const fetchCompany = async () => {
 const createBranch = async (name: string, companyID: string) => {
   console.info("name", name);
   console.info("companyID", companyID);
+  const token = getTokenSilentry();
   await axios.post(
     GRAPH_QL_ENDPOINT,
     {
@@ -81,7 +83,7 @@ const createBranch = async (name: string, companyID: string) => {
     {
       headers: {
         "Content-Type": "application/graphql",
-        "x-api-key": APPSYNC_API_KEY
+        Authorization: token
       }
     }
   );
@@ -94,7 +96,8 @@ export default function Branch(_: RouteComponentProps) {
   const [selectedCompanyID, setSelectedCompanyID] = React.useState("");
   React.useEffect(() => {
     const init = async () => {
-      const res = await Promise.all([fetchBranch(), fetchCompany()]);
+      const token = await getTokenSilentry();
+      const res = await Promise.all([fetchBranch(token), fetchCompany(token)]);
       console.info("res", res);
       setListBranch(res[0].data.data.listBranch);
       setListCompany(res[1].data.data.listCompany);

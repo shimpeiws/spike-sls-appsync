@@ -24,8 +24,7 @@ module.exports = {
 
   plugins: [
     new webpack.DefinePlugin({
-      GRAPH_QL_ENDPOINT: JSON.stringify(process.env.GRAPH_QL_ENDPOINT),
-      APPSYNC_API_KEY: JSON.stringify(process.env.APPSYNC_API_KEY)
+      GRAPH_QL_ENDPOINT: JSON.stringify(process.env.GRAPH_QL_ENDPOINT)
     })
   ],
 

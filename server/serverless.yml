@@ -15,7 +15,11 @@ provider:
 custom:
   appSync:
     name: spike-sls-appsync
-    authenticationType: API_KEY
+    authenticationType: OPENID_CONNECT
+    openIdConnectConfig:
+      issuer: https://high-pine.auth0.com
+      iatTTL: 0
+      authTTL: 0
     region: ap-northeast-1
     mappingTemplatesLocation: resolvers
     mappingTemplates:
