@@ -21,7 +21,7 @@ custom:
     mappingTemplates:
       - type: Mutation
         field: createUser
-        dataSource: User
+        dataSource: CreateUserLambda
       - type: Query
         field: listUser
         dataSource: User
@@ -42,6 +42,23 @@ custom:
       - schema/branch.graphql
       - schema/company.graphql
     dataSources:
+      - type: AWS_LAMBDA
+        name: CreateUserLambda
+        description: "lambda for create Auth0 user and dynamo record"
+        config:
+          functionName: createUser
+          iamRoleStatements:
+            - Effect: Allow
+              Action:
+                - "lambda:invokeFunction"
+              Resource:
+                - "arn:aws:lambda:${self:provider.region}:*:*-createUser"
+                - "arn:aws:lambda:${self:provider.region}:*:*-createUser:*"
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource:
+                - arn:aws:dynamodb:${self:provider.region}:*:table/appsync-user
       - type: AMAZON_DYNAMODB
         name: User
         config:
@@ -80,3 +97,5 @@ functions:
       - http:
           method: get
           path: hello
+  createUser:
+    handler: handler.createUser

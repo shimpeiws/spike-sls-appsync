@@ -10,3 +10,11 @@ export const hello: APIGatewayProxyHandler = async event => {
     })
   };
 };
+
+export const createUser = (_, __, callback) => {
+  callback(null, {
+    id: "uuid",
+    name: "name",
+    createdAt: "2020-02-25T03:10:36.479Z"
+  });
+};
