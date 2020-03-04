@@ -58,11 +58,6 @@ custom:
               Resource:
                 - "arn:aws:lambda:${self:provider.region}:*:*-createUser"
                 - "arn:aws:lambda:${self:provider.region}:*:*-createUser:*"
-            - Effect: Allow
-              Action:
-                - dynamodb:*
-              Resource:
-                - arn:aws:dynamodb:${self:provider.region}:*:table/appsync-user
       - type: AMAZON_DYNAMODB
         name: User
         config:
