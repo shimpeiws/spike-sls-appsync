@@ -1,4 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
+import { ManagementClient } from "auth0";
 
 export const hello: APIGatewayProxyHandler = async event => {
   return {
@@ -11,7 +12,17 @@ export const hello: APIGatewayProxyHandler = async event => {
   };
 };
 
-export const createUser = (_, __, callback) => {
+export const createUser = async (_, __, callback) => {
+  const auth0Client = new ManagementClient({
+    domain: "YOUR-DOMAIN",
+    clientId: "YOUR-CLIENT-ID",
+    clientSecret: "YOUR-CLIENT-SECRET",
+    scope: "create:users"
+  });
+  await auth0Client.createUser({
+    email: "test@example.com",
+    password: "your-password"
+  });
   callback(null, {
     id: "uuid",
     name: "name",
