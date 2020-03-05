@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { ManagementClient } from "auth0";
+import { ManagementClient, AuthenticationClient } from "auth0";
 
 export const hello: APIGatewayProxyHandler = async event => {
   return {
@@ -13,16 +13,26 @@ export const hello: APIGatewayProxyHandler = async event => {
 };
 
 export const createUser = async (_, __, callback) => {
-  const auth0Client = new ManagementClient({
-    domain: "YOUR-DOMAIN",
+  const auth0 = new Auth0.AuthenticationClient({
+    domain: "high-pine.auth0.com",
     clientId: "YOUR-CLIENT-ID",
-    clientSecret: "YOUR-CLIENT-SECRET",
-    scope: "create:users"
+    clientSecret: "YOUR-CLIENT-SECRET"
   });
-  await auth0Client.createUser({
+  console.log(auth0);
+  const credentials = await auth0.clientCredentialsGrant({
+    audience: "https://high-pine.auth0.com/api/v2/"
+  });
+  console.info("credentials.access_token", credentials.access_token);
+  const management = new ManagementClient({
+    token: credentials.access_token,
+    domain: "high-pine.auth0.com"
+  });
+  const res = await management.createUser({
     email: "test@example.com",
-    password: "your-password"
+    password: "password",
+    connection: "Username-Password-Authentication"
   });
+  console.info("res = ", res);
   callback(null, {
     id: "uuid",
     name: "name",
