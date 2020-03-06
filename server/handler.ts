@@ -1,5 +1,6 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import axios from "axios";
+import { DynamoDB as AwsDynamoDB } from "aws-sdk";
 
 export const hello: APIGatewayProxyHandler = async event => {
   return {
@@ -38,10 +39,28 @@ export const createUser = async (event, __, callback) => {
       }
     }
   );
-  console.info("resCreateUser = ", resCreateUser);
+  const userId = resCreateUser.data.user_id as string;
+  const splited = userId.split("|");
+  const providerId = splited[1];
+  const providerName = splited[0];
+
+  const dynamo = new AwsDynamoDB.DocumentClient();
+  const date = new Date();
+  const timestamp = Math.floor(date.getTime() / 1000);
+  const params = {
+    TableName: "appsync-user",
+    Item: {
+      provider_id: providerId,
+      provider_name: providerName,
+      createdAt: timestamp,
+      updatedAt: timestamp
+    }
+  };
+  await dynamo.put(params).promise();
   callback(null, {
-    id: "uuid",
-    name: "name",
-    createdAt: "2020-02-25T03:10:36.479Z"
+    id: userId,
+    providerId: providerId,
+    providerName: providerName,
+    createdAt: timestamp
   });
 };
