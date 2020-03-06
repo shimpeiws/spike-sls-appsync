@@ -14,6 +14,7 @@ export const hello: APIGatewayProxyHandler = async event => {
 };
 
 export const createUser = async (event, __, callback) => {
+  console.info("event", event);
   const resToken = await axios.post(
     `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
     {
@@ -28,9 +29,9 @@ export const createUser = async (event, __, callback) => {
   const resCreateUser = await axios.post(
     `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
     {
-      email: event.email,
+      email: event.arguments.input.email,
       connection: "Username-Password-Authentication",
-      password: event.password
+      password: event.arguments.input.password
     },
     {
       headers: {
@@ -52,8 +53,8 @@ export const createUser = async (event, __, callback) => {
     Item: {
       provider_id: providerId,
       provider_name: providerName,
-      createdAt: timestamp,
-      updatedAt: timestamp
+      created_at: timestamp,
+      updated_at: timestamp
     }
   };
   await dynamo.put(params).promise();
