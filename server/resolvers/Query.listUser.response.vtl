@@ -1,1 +1,12 @@
-$util.toJson($context.result.items)
+#set($data = [])
+
+#foreach($item in $context.result.items)
+    #set($tmpMap = {})
+    $util.qr($tmpMap.put("id", "$item.provider_name|$item.provider_id"))
+    $util.qr($tmpMap.put("providerId", "$item.provider_id"))
+    $util.qr($tmpMap.put("providerName", "$item.provider_name"))
+    $util.qr($tmpMap.put("createdAt", "$item.created_at"))
+    $util.qr($data.add($tmpMap))
+#end
+
+$util.toJson($data)

@@ -1,11 +1,13 @@
 type User {
   id: ID!
-  name: String!
-  createdAt: AWSDateTime!
+  providerId: String!
+  providerName: String!
+  createdAt: String!
 }
 
 input CreateInputUser {
-  name: String!
+  email: String!
+  password: String!
 }
 
 type Query {
