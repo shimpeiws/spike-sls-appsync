@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { ManagementClient, AuthenticationClient } from "auth0";
+import axios from "axios";
 
 export const hello: APIGatewayProxyHandler = async event => {
   return {
@@ -12,27 +12,33 @@ export const hello: APIGatewayProxyHandler = async event => {
   };
 };
 
-export const createUser = async (_, __, callback) => {
-  const auth0 = new Auth0.AuthenticationClient({
-    domain: "high-pine.auth0.com",
-    clientId: "YOUR-CLIENT-ID",
-    clientSecret: "YOUR-CLIENT-SECRET"
-  });
-  console.log(auth0);
-  const credentials = await auth0.clientCredentialsGrant({
-    audience: "https://high-pine.auth0.com/api/v2/"
-  });
-  console.info("credentials.access_token", credentials.access_token);
-  const management = new ManagementClient({
-    token: credentials.access_token,
-    domain: "high-pine.auth0.com"
-  });
-  const res = await management.createUser({
-    email: "test@example.com",
-    password: "password",
-    connection: "Username-Password-Authentication"
-  });
-  console.info("res = ", res);
+export const createUser = async (event, __, callback) => {
+  const resToken = await axios.post(
+    `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+    {
+      grant_type: "client_credentials",
+      client_id: process.env.AUTH0_CLIENT_ID,
+      client_secret: process.env.AUTH0_CLIENT_SECRET,
+      audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`
+    },
+    { headers: { "content-type": "application/x-www-form-urlencoded" } }
+  );
+  console.info("resToken.data.access_token", resToken.data.access_token);
+  const resCreateUser = await axios.post(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+    {
+      email: event.email,
+      connection: "Username-Password-Authentication",
+      password: event.password
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${resToken.data.access_token}`
+      }
+    }
+  );
+  console.info("resCreateUser = ", resCreateUser);
   callback(null, {
     id: "uuid",
     name: "name",
