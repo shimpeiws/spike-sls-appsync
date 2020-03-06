@@ -6,20 +6,22 @@ import { getTokenSilentry } from "./lib/Auth0";
 
 interface User {
   id: string;
-  name: string;
+  providerId: string;
+  providerName: string;
   createdAt: string;
 }
 
-const createUser = async (name: string) => {
+const createUser = async (email: string, password: string) => {
   const token = await getTokenSilentry();
   await axios.post(
     GRAPH_QL_ENDPOINT,
     {
       query: `
             mutation {
-              createUser(input: {name: "${name}"}) {
+              createUser(input: {email: "${email}", password: "${password}"}) {
                 id,
-                name,
+                providerId,
+                providerName,
                 createdAt
               }
             }
@@ -35,7 +37,8 @@ const createUser = async (name: string) => {
 };
 
 export default function User(_: RouteComponentProps) {
-  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [listUser, setListUser] = React.useState([] as User[]);
   React.useEffect(() => {
     const init = async () => {
@@ -47,7 +50,8 @@ export default function User(_: RouteComponentProps) {
             query {
               listUser {
                 id,
-                name,
+                providerId,
+                providerName,
                 createdAt
               }
             }
@@ -71,12 +75,19 @@ export default function User(_: RouteComponentProps) {
       {listUser.map(user => {
         return (
           <p>
-            {user.id}: {user.name}
+            {user.id} | {user.providerId} | {user.providerName} |{" "}
+            {user.createdAt}
           </p>
         );
       })}
-      <input value={name} onChange={e => setName(e.target.value)} />
-      <button onClick={() => createUser(name)}>CREATE USER</button>
+      <div>
+        email: <input value={email} onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div>
+        password:{" "}
+        <input value={password} onChange={e => setPassword(e.target.value)} />
+      </div>
+      <button onClick={() => createUser(email, password)}>CREATE USER</button>
     </div>
   );
 }
