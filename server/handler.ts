@@ -21,7 +21,7 @@ export const createUser = async (event, __, callback) => {
       client_secret: process.env.AUTH0_CLIENT_SECRET,
       audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`
     },
-    { headers: { "content-type": "application/x-www-form-urlencoded" } }
+    { headers: { "'content-type'": "application/x-www-form-urlencoded" } }
   );
   console.info("resToken.data.access_token", resToken.data.access_token);
   const resCreateUser = await axios.post(
