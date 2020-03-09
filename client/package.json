@@ -14,6 +14,7 @@
     "aws-appsync": "^3.0.2",
     "aws-appsync-react": "^3.0.2",
     "axios": "^0.19.2",
+    "graphql-tag": "^2.10.3",
     "react": "^16.12.0",
     "react-apollo": "^2.5.8",
     "react-dom": "^16.12.0",

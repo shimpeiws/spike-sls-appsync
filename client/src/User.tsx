@@ -1,12 +1,9 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router";
 import axios from "axios";
 import { GRAPH_QL_ENDPOINT } from "./Constants";
 import { getTokenSilentry } from "./lib/Auth0";
-import { client as AppSyncClient } from "./lib/AppSync";
-import { ApolloProvider } from "react-apollo";
-import { Rehydrated } from "aws-appsync-react";
-import AWSAppSyncClient from "aws-appsync";
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
 
 interface User {
   id: string;
@@ -14,6 +11,17 @@ interface User {
   providerName: string;
   createdAt: string;
 }
+
+const listUser = gql`
+  query {
+    listUser {
+      id
+      providerId
+      providerName
+      createdAt
+    }
+  }
+`;
 
 const createUser = async (email: string, password: string) => {
   const token = await getTokenSilentry();
@@ -40,44 +48,45 @@ const createUser = async (email: string, password: string) => {
   );
 };
 
-export default function User(_: RouteComponentProps) {
+interface Props {
+  users: User[];
+}
+
+const User: React.FC<Props> = props => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [client, setClient] = React.useState(null as unknown);
-  React.useEffect(() => {
-    const init = async () => {
-      const appsyncClient = await AppSyncClient();
-      setClient(appsyncClient);
-    };
-    init();
-  }, []);
-  if (!client) {
-    console.info("return null");
-    return null;
-  }
-  console.info("client", client);
-  const appClient = client as AWSAppSyncClient<any>;
+  console.info("props.users", props.users);
   return (
-    <ApolloProvider client={appClient}>
-      <Rehydrated>
-        <div>
-          <h2>User</h2>
-          <div>
-            email:{" "}
-            <input value={email} onChange={e => setEmail(e.target.value)} />
-          </div>
-          <div>
-            password:{" "}
-            <input
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
-          </div>
-          <button onClick={() => createUser(email, password)}>
-            CREATE USER
-          </button>
-        </div>
-      </Rehydrated>
-    </ApolloProvider>
+    <div>
+      <h2>User</h2>
+      {props.users.map(user => {
+        return (
+          <p>
+            {user.id} | {user.providerId} | {user.providerName} |{" "}
+            {user.createdAt}
+          </p>
+        );
+      })}
+      <div>
+        email: <input value={email} onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div>
+        password:{" "}
+        <input value={password} onChange={e => setPassword(e.target.value)} />
+      </div>
+      <button onClick={() => createUser(email, password)}>CREATE USER</button>
+    </div>
   );
-}
+};
+
+export default graphql(listUser, {
+  options: {
+    fetchPolicy: "cache-and-network"
+  },
+  props: (props: any) => {
+    console.info("props", props);
+    return {
+      users: props.data && props.data.listUser ? props.data.listUser : []
+    };
+  }
+})(User);
