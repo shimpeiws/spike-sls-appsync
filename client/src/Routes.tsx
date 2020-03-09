@@ -21,7 +21,17 @@ export const Routes: React.FC<any> = props => {
     init();
   }, []);
   if (!client) {
-    return null;
+    return (
+      <div>
+        <h1>spike-sls-appsync</h1>
+        <li>
+          <Link to="/signin">Sginin</Link>
+        </li>
+        <Switch>
+          <Route exact path="/signin" component={Signin} />
+        </Switch>
+      </div>
+    );
   }
   const appClient = client as AWSAppSyncClient<any>;
   return (
