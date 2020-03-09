@@ -1,9 +1,7 @@
 import * as React from "react";
-import axios from "axios";
-import { GRAPH_QL_ENDPOINT } from "./Constants";
-import { getTokenSilentry } from "./lib/Auth0";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
+import { graphqlMutation } from "aws-appsync-react";
 
 interface User {
   id: string;
@@ -23,33 +21,20 @@ const listUser = gql`
   }
 `;
 
-const createUser = async (email: string, password: string) => {
-  const token = await getTokenSilentry();
-  await axios.post(
-    GRAPH_QL_ENDPOINT,
-    {
-      query: `
-            mutation {
-              createUser(input: {email: "${email}", password: "${password}"}) {
-                id,
-                providerId,
-                providerName,
-                createdAt
-              }
-            }
-            `
-    },
-    {
-      headers: {
-        "Content-Type": "application/graphql",
-        Authorization: token
-      }
+const createUser = gql`
+  mutation createUser($email: String!, $password: String!) {
+    createUser(input: { email: $email, password: $password }) {
+      id
+      providerId
+      providerName
+      createdAt
     }
-  );
-};
+  }
+`;
 
 interface Props {
   users: User[];
+  createUser: any;
 }
 
 const User: React.FC<Props> = props => {
@@ -74,19 +59,21 @@ const User: React.FC<Props> = props => {
         password:{" "}
         <input value={password} onChange={e => setPassword(e.target.value)} />
       </div>
-      <button onClick={() => createUser(email, password)}>CREATE USER</button>
+      <button onClick={() => props.createUser({ email, password })}>
+        CREATE USER
+      </button>
     </div>
   );
 };
 
-export default graphql(listUser, {
-  options: {
-    fetchPolicy: "cache-and-network"
-  },
-  props: (props: any) => {
-    console.info("props", props);
-    return {
+export default compose(
+  graphql(listUser, {
+    options: {
+      fetchPolicy: "cache-and-network"
+    },
+    props: (props: any) => ({
       users: props.data && props.data.listUser ? props.data.listUser : []
-    };
-  }
-})(User);
+    })
+  }),
+  graphqlMutation(createUser, listUser, "User")
+)(User);
