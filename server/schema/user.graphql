@@ -17,3 +17,7 @@ type Query {
 type Mutation {
   createUser(input: CreateInputUser!): User
 }
+
+type Subscription {
+  onNewUserCreated: User @aws_subscribe(mutations: ["createUser"])
+}

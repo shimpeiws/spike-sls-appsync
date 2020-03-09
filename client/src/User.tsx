@@ -2,6 +2,7 @@ import * as React from "react";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { graphqlMutation } from "aws-appsync-react";
+import { buildSubscription } from "aws-appsync";
 
 interface User {
   id: string;
@@ -32,14 +33,29 @@ const createUser = gql`
   }
 `;
 
+const userSubscription = gql`
+  subscription postSubscription {
+    onNewUserCreated {
+      id
+      providerId
+      providerName
+      createdAt
+    }
+  }
+`;
+
 interface Props {
   users: User[];
   createUser: any;
+  data: any;
 }
 
 const User: React.FC<Props> = props => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  React.useEffect(() => {
+    props.data.subscribeToMore(buildSubscription(userSubscription, listUser));
+  }, []);
   console.info("props.users", props.users);
   return (
     <div>
@@ -72,7 +88,8 @@ export default compose(
       fetchPolicy: "cache-and-network"
     },
     props: (props: any) => ({
-      users: props.data && props.data.listUser ? props.data.listUser : []
+      users: props.data && props.data.listUser ? props.data.listUser : [],
+      data: props.data
     })
   }),
   graphqlMutation(createUser, listUser, "User")
