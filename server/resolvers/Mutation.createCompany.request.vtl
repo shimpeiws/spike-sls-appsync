@@ -1,3 +1,10 @@
+#if($util.isNullOrBlank($ctx.args.input.name))
+    $util.appendError("名前を入力してください。", "name", null, $ctx.args.input.name)
+#end
+#if($ctx.outErrors.size() > 0)
+    #return($ctx.outErrors)
+#end
+
 $util.qr($context.args.input.put("createdAt", $util.defaultIfNull($ctx.args.input.createdAt, $util.time.nowISO8601())))
 
 {
