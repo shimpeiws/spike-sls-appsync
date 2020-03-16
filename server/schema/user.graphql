@@ -3,6 +3,7 @@ type User {
   providerId: String!
   providerName: String!
   createdAt: String!
+  company: Company!
 }
 
 input CreateInputUser {

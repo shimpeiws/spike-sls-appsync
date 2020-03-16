@@ -40,7 +40,12 @@ custom:
         dataSource: CreateUserLambda
       - type: Query
         field: listUser
-        dataSource: User
+        request: "./Query.listUserRequest.vtl"
+        response: "./Query.listUserResponse.vtl"
+        kind: PIPELINE
+        functions:
+          - listUser
+          - fetchCompany
       - type: Mutation
         field: createBranch
         dataSource: Branch
@@ -53,6 +58,15 @@ custom:
       - type: Query
         field: listCompany
         dataSource: Company
+    functionConfigurations:
+      - dataSource: User
+        name: "listUser"
+        request: "./Query.listUser.request.vtl"
+        response: "./Query.listUser.response.vtl"
+      - dataSource: Company
+        name: "fetchCompany"
+        request: "./Query.fetchCompany.request.vtl"
+        response: "./Query.fetchCompany.response.vtl"
     schema:
       - schema/user.graphql
       - schema/branch.graphql
