@@ -1,18 +1,4 @@
-#set($companyIDs = [])
-#set($users = $ctx.prev.result.items)
-#foreach($u in $users)
-    #if(!$companyIDs.contains($u.companyID))
-        $util.qr($companyIDs.add($u.companyID))
-    #end
-#end
-
 {
     "version" : "2017-02-28",
-    "operation" : "Scan",
-    "filter" : {
-        "expression": "contains(:ids, id)",
-        "expressionValues" : {
-            ":ids" : $util.dynamodb.toDynamoDBJson($companyIDs)
-        }
-    }
+    "operation" : "Scan"
 }
