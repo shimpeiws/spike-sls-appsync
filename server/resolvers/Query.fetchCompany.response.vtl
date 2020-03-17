@@ -1,0 +1,14 @@
+#if($ctx.error)
+    $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+#foreach($user in $ctx.prev.result)
+    #foreach( $company in $ctx.result.items )
+        #if($user.companyId == $company.id)
+            #set($tmpCompany = $company)
+        #end
+    #end
+    $util.qr($user.put("company", $tmpCompany))
+#end
+
+$util.toJson($ctx.prev.result)
