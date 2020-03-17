@@ -4,11 +4,17 @@ import { graphql, compose } from "react-apollo";
 import { graphqlMutation } from "aws-appsync-react";
 import { buildSubscription } from "aws-appsync";
 
+interface Company {
+  id: string;
+  name: string;
+}
+
 interface User {
   id: string;
   providerId: string;
   providerName: string;
   createdAt: string;
+  company: Company;
 }
 
 const listUser = gql`
@@ -18,6 +24,10 @@ const listUser = gql`
       providerId
       providerName
       createdAt
+      company {
+        id
+        name
+      }
     }
   }
 `;
@@ -62,10 +72,17 @@ const User: React.FC<Props> = props => {
       <h2>User</h2>
       {props.users.map(user => {
         return (
-          <p>
-            {user.id} | {user.providerId} | {user.providerName} |{" "}
-            {user.createdAt}
-          </p>
+          <>
+            <p>User</p>
+            <p>
+              {user.id} | {user.providerId} | {user.providerName} |{" "}
+              {user.createdAt}
+            </p>
+            <p>Company</p>
+            <p>
+              {user.company.id} | {user.company.name}
+            </p>
+          </>
         );
       })}
       <div>
